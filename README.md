@@ -11,19 +11,16 @@ So you need to install this if you want to use [xremap](https://github.com/k0kub
 
 ## Installation
 
-Run:
+Install xremap's GNOME Shell extension from [this link](https://extensions.gnome.org/extension/5060/xremap/),
+switching OFF to ON.
+
+## Development
 
 ```bash
 git clone https://github.com/xremap/xremap-gnome ~/.local/share/gnome-shell/extensions/xremap@k0kubun.com
-```
-
-and restart your GNOME Shell session, e.g. reboot. Then run:
-
-```
+# Reload your GNOME Shell session, and then enable "Xremap" using:
 gnome-extensions-app
 ```
-
-Once you enable "Xremap" there, an xremap binary built with `--features gnome` should work.
 
 ## License
 
