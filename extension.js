@@ -11,6 +11,9 @@ class Xremap {
     const dbus_object = `
       <node>
         <interface name="com.k0kubun.Xremap">
+          <method name="ActiveWindow">
+            <arg type="s" direction="out" name="win"/>
+          </method>
           <method name="WMClass">
             <arg type="s" direction="out" name="win"/>
           </method>
@@ -27,8 +30,18 @@ class Xremap {
     delete this.dbus;
   }
 
+  ActiveWindow() {
+    const actor = global.get_window_actors().find(a=>a.meta_window.has_focus()===true);
+    if (actor) {
+      const w = actor.get_meta_window();
+      return JSON.stringify({ wm_class: w.get_wm_class(), title: w.get_title() });
+    } else {
+      return '{}';
+    }
+  }
+
   WMClass() {
-    const actor = global.get_window_actors().find(a=>a.meta_window.has_focus()===true)
+    const actor = global.get_window_actors().find(a=>a.meta_window.has_focus()===true);
     return actor && actor.get_meta_window().get_wm_class();
   }
 }
