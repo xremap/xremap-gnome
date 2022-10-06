@@ -17,6 +17,9 @@ class Xremap {
           <method name="WMClass">
             <arg type="s" direction="out" name="win"/>
           </method>
+          <method name="WMClasses">
+            <arg type="s" direction="out" name="win"/>
+          </method>
         </interface>
       </node>
     `;
@@ -43,6 +46,13 @@ class Xremap {
   WMClass() {
     const actor = global.get_window_actors().find(a=>a.meta_window.has_focus()===true);
     return actor && actor.get_meta_window().get_wm_class();
+  }
+
+  // To see the application names through the busctl
+  WMClasses() {
+    // Even if it makes the items in a list joined by "\n", dbus output escapes the new line characters.
+    // So this outputs JSON array string instead of the plain text for understandability.
+    return JSON.stringify([...new Set(global.get_window_actors().map(a => a.get_meta_window().get_wm_class()))]);
   }
 }
 
