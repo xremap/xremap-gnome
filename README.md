@@ -22,6 +22,12 @@ git clone https://github.com/xremap/xremap-gnome ~/.local/share/gnome-shell/exte
 gnome-extensions-app
 ```
 
+## Release
+
+1. Update `version` in metadata.json. Push it to master.
+2. Run `./package.sh`. It creates `extension.zip`.
+3. Upload it from https://extensions.gnome.org/upload/.
+
 ## License
 
 GPLv2+
