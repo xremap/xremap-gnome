@@ -26,7 +26,7 @@ gnome-extensions-app
 
 1. Update `version` in `metadata.json`. Push it to master.
 2. Run `./package.sh`. It creates `extension.zip`.
-3. Upload it from https://extensions.gnome.org/upload/.
+3. Open https://extensions.gnome.org/upload/ and upload it.
 
 ## License
 
