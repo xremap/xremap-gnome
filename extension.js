@@ -1,12 +1,10 @@
 // Copyright (C) 2022 Takashi Kokubun
 // Licence: GPLv2+
 
-const { Gio } = imports.gi;
+import Gio from 'gi://Gio'
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-class Xremap {
-  constructor() {
-  }
-
+export default class Xremap extends Extension {
   enable() {
     const dbus_object = `
       <node>
@@ -56,6 +54,3 @@ class Xremap {
   }
 }
 
-function init() {
-  return new Xremap();
-}
