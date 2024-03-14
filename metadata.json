@@ -2,7 +2,8 @@
   "name": "Xremap",
   "description": "Allow xremap to fetch the focused app name using D-Bus",
   "shell-version" : [
-    "45"
+    "45",
+    "46"
   ],
   "url" : "https://github.com/xremap/xremap-gnome",
   "uuid": "xremap@k0kubun.com",
