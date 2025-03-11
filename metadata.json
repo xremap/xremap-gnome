@@ -4,9 +4,10 @@
   "shell-version" : [
     "45",
     "46",
-    "47"
+    "47",
+    "48"
   ],
   "url" : "https://github.com/xremap/xremap-gnome",
   "uuid": "xremap@k0kubun.com",
-  "version" : 7
+  "version" : 9
 }
