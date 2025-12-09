@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.xremap" path="/org/gnome/shell/extensions/xremap/">
+    <key name="socket-path" type="s">
+      <default>'/run/xremap/gnome.sock'</default>
+      <summary>Unix socket path</summary>
+      <description>Path to the Unix socket for xremap communication. The directory must exist and be writable by the gnome session user.</description>
+    </key>
+  </schema>
+</schemalist>
