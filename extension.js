@@ -91,7 +91,7 @@ export default class Xremap extends Extension {
       const socketDir = GLib.path_get_dirname(this._socketPath);
       const dirFile = Gio.File.new_for_path(socketDir);
       if (!dirFile.query_exists(null)) {
-        this._log(`Skipping socket server. Socket directory ${socketDir} does not exist.`);
+        this._info(`Skipping socket server. Socket directory ${socketDir} does not exist.`);
         return;
       }
       const socketFile = Gio.File.new_for_path(this._socketPath);
@@ -99,11 +99,11 @@ export default class Xremap extends Extension {
         try {
           socketFile.delete(null);
         } catch (e) {
-          this._log(`Skipping socket server. Cannot remove stale socket: ${e.message}`);
+          this._error(`Skipping socket server. Cannot remove stale socket: ${e.message}`);
           return;
         }
       } else if (socketFile.query_exists(null)) {
-        this._log(`Skipping socket server. Socket file has wrong type.`);
+        this._error(`Skipping socket server. Socket file has wrong type.`);
         return;
       }
 
@@ -116,15 +116,15 @@ export default class Xremap extends Extension {
       );
       this._socketService.connect('incoming', this._handleConnection);
       this._socketService.start();
-      this._log(`Socket server listening on ${this._socketPath}`);
+      this._info(`Socket server listening on ${this._socketPath}`);
 
       try {
         GLib.chmod(this._socketPath, 0o660);
       } catch (e) {
-        this._log(`Cannot set socket permissions: ${e.message}`);
+        this._error(`Cannot set socket permissions: ${e.message}`);
       }
     } catch (e) {
-      this._log(`Cannot start socket server: ${e.message}`);
+      this._error(`Cannot start socket server: ${e.message}`);
       this._socketService = null;
     }
   }
@@ -138,10 +138,10 @@ export default class Xremap extends Extension {
         const socketFile = Gio.File.new_for_path(this._socketPath);
         if (this._isSocket(socketFile)) {
           socketFile.delete(null);
-          this._log(`Removed socket file: ${this._socketPath}`);
+          this._info(`Removed socket file: ${this._socketPath}`);
         }
       } catch (e) {
-        this._log(`Failed to remove socket file: ${e.message}`);
+        this._error(`Failed to remove socket file: ${e.message}`);
       }
     }
   }
@@ -160,7 +160,7 @@ export default class Xremap extends Extension {
         }
       }
     } catch (e) {
-      this._log(`Connection error: ${e.message}`);
+      this._error(`Connection error: ${e.message}`);
     } finally {
       connection.close(null);
     }
@@ -180,10 +180,10 @@ export default class Xremap extends Extension {
       if (typeof cmd === 'object' && cmd.Run) {
         return this._run(cmd.Run);
       }
-      this._log(`Unknown command: ${command}`);
+      this._error(`Unknown command: ${command}`);
       return { Error: 'Unknown command' };
     } catch (e) {
-      this._log(`Command error: ${e.message}`);
+      this._error(`Command error: ${e.message}`);
       return { Error: e.message };
     }
   }
@@ -226,11 +226,11 @@ export default class Xremap extends Extension {
         try {
           source.wait_check_finish(result);
         } catch (e) {
-          this._log(`${JSON.stringify(command)} error: ${e.message}`);
+          this._error(`${JSON.stringify(command)} error: ${e.message}`);
         }
       });
     } catch (e) {
-      this._log(`Cannot run ${JSON.stringify(command)}: ${e.message}`);
+      this._error(`Cannot run ${JSON.stringify(command)}: ${e.message}`);
     }
     return "Ok";
   }
@@ -248,8 +248,12 @@ export default class Xremap extends Extension {
     return file.query_file_type('', null) === Gio.FileType.SPECIAL;
   }
 
-  _log(message) {
-    log(`[Xremap] ${message}`);
+  _info(message) {
+    console.info(`[Xremap] ${message}`);
+  }
+
+  _error(message) {
+    console.error(`[Xremap] ${message}`);
   }
 }
 
