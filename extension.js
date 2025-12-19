@@ -25,21 +25,13 @@ export default class Xremap extends Extension {
     this.dbus = Gio.DBusExportedObject.wrapJSObject(dbus_object, this);
     this.dbus.export(Gio.DBus.session, '/com/k0kubun/Xremap');
 
-    this._settings = this.getSettings();
-    this._socketPath = this._settings.get_string('socket-path');
+    this._socketPath = this._getSocketPath()
     this._socketService = null;
-    this._settingsChangedId = this._settings.connect(
-      'changed::socket-path', () => { this._onSocketPathChanged(); });
     this._startSocketServer();
   }
 
   disable() {
     this._stopSocketServer();
-    if (this._settingsChangedId) {
-      this._settings.disconnect(this._settingsChangedId);
-    }
-    this._settingsChangedId = null;
-    this._settings = null;
 
     this.dbus.flush();
     this.dbus.unexport();
@@ -234,13 +226,13 @@ export default class Xremap extends Extension {
     return "Ok";
   }
 
-  _onSocketPathChanged() {
-    const path = this._settings.get_string('socket-path');
-    if (path !== this._socketPath) {
-      this._stopSocketServer();
-      this._socketPath = path;
-      this._startSocketServer();
+  _getSocketPath() {
+    const envPath = GLib.getenv("XREMAP_GNOME_SOCKET");
+    if (envPath) {
+      return envPath;
     }
+    const uid = Gio.Credentials.new().get_unix_user();
+    return `/run/xremap/${uid}/gnome.sock`;
   }
 
   _isSocket(file) {
