@@ -116,7 +116,7 @@ export default class Xremap extends Extension {
       );
       this._socketService.connect('incoming', this._handleConnection);
       this._socketService.start();
-      this._info(`Socket server listening on ${this._socketPath}`);
+      this._log(`Socket server listening on ${this._socketPath}`);
 
       try {
         GLib.chmod(this._socketPath, 0o660);
@@ -250,6 +250,10 @@ export default class Xremap extends Extension {
 
   _info(message) {
     console.info(`[Xremap] ${message}`);
+  }
+
+  _log(message) {
+    console.log(`[Xremap] ${message}`);
   }
 
   _error(message) {
