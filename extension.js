@@ -28,7 +28,6 @@ export default class Xremap extends Extension {
     this._settings = this.getSettings();
     this._socketPath = this._settings.get_string('socket-path');
     this._socketService = null;
-    this._isLocked = false;
     this._settingsChangedId = this._settings.connect(
       'changed::socket-path', () => { this._onSocketPathChanged(); });
     this._startSocketServer();
@@ -83,7 +82,7 @@ export default class Xremap extends Extension {
   }
 
   _startSocketServer() {
-    if (this._socketService || this._isLocked || !this._socketPath) {
+    if (this._socketService || !this._socketPath) {
       return;
     }
 
