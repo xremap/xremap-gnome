@@ -90,11 +90,12 @@ export default class Xremap extends Extension {
         try {
           socketFile.delete(null);
         } catch (e) {
-          this._error(`Skipping socket server. Cannot remove stale socket: ${e.message}`);
+          this._error(`Skipping socket server. Cannot remove `
+            + `stale socket at ${this._socketPath}: ${e.message}`);
           return;
         }
       } else if (socketFile.query_exists(null)) {
-        this._error(`Skipping socket server. Socket file has wrong type.`);
+        this._error(`Skipping socket server. ${this._socketPath} has wrong type.`);
         return;
       }
 
@@ -112,10 +113,10 @@ export default class Xremap extends Extension {
       try {
         GLib.chmod(this._socketPath, 0o660);
       } catch (e) {
-        this._error(`Cannot set socket permissions: ${e.message}`);
+        this._error(`Cannot set socket permissions on ${this._socketPath}: ${e.message}`);
       }
     } catch (e) {
-      this._error(`Cannot start socket server: ${e.message}`);
+      this._error(`Cannot start socket server on ${this._socketPath}: ${e.message}`);
       this._socketService = null;
     }
   }
@@ -132,7 +133,7 @@ export default class Xremap extends Extension {
           this._info(`Removed socket file: ${this._socketPath}`);
         }
       } catch (e) {
-        this._error(`Failed to remove socket file: ${e.message}`);
+        this._error(`Failed to remove ${this._socketPath}: ${e.message}`);
       }
     }
   }
