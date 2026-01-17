@@ -20,11 +20,13 @@ For a secure xremap configuration, [`xremap-socket`](https://github.com/millerde
 can be used to route active window requests to the active GNOME session. See the
 `xremap-socket` README for configuration details.
 
-By default the socket path is `/run/xremap/${UID}/gnome.sock`. The socket is
-activated only if the socket directory (`/run/xremap/${UID}` by default) exists
-and is writable by the GNOME session user. The socket path can be changed with
-an environment variable, `XREMAP_GNOME_SOCKET`, which can be set in
-`~/.config/environment.d/99-xremap.conf` or `/etc/environment.d/90-xremap.conf`.
+By default the socket path is `/run/xremap/${UID}/xremap.sock` unless the
+`/run/xremap/${UID}` directory does not exist, in which case the legacy default
+`/run/xremap/gnome.sock` is used instead. The socket is activated only if its
+parent directory exists and is writable by the GNOME session user. The socket
+path can be changed with an environment variable, `XREMAP_GNOME_SOCKET`, which
+can be set in `~/.config/environment.d/99-xremap.conf` or
+`/etc/environment.d/90-xremap.conf`.
 
 ## Development
 

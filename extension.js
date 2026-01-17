@@ -233,7 +233,12 @@ export default class Xremap extends Extension {
       return envPath;
     }
     const uid = Gio.Credentials.new().get_unix_user();
-    return `/run/xremap/${uid}/gnome.sock`;
+    const dir = Gio.File.new_for_path(`/run/xremap/${uid}`)
+    if (dir.query_file_type('', null) === Gio.FileType.DIRECTORY) {
+      return `/run/xremap/${uid}/xremap.sock`;
+    }
+    // fall back to legacy default
+    return "/run/xremap/gnome.sock";
   }
 
   _isSocket(file) {
