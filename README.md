@@ -16,10 +16,6 @@ switching OFF to ON.
 
 ## Configuration
 
-For a secure xremap configuration, [`xremap-socket`](https://github.com/millerdev/xremap-socket)
-can be used to route active window requests to the active GNOME session. See the
-`xremap-socket` README for configuration details.
-
 By default the socket path is `/run/xremap/${UID}/xremap.sock` unless the
 `/run/xremap/${UID}` directory does not exist, in which case the legacy default
 `/run/xremap/gnome.sock` is used instead. The socket is activated only if its
