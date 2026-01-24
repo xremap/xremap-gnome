@@ -25,22 +25,13 @@ export default class Xremap extends Extension {
     this.dbus = Gio.DBusExportedObject.wrapJSObject(dbus_object, this);
     this.dbus.export(Gio.DBus.session, '/com/k0kubun/Xremap');
 
-    this._settings = this.getSettings();
-    this._socketPath = this._settings.get_string('socket-path');
+    this._socketPath = this._getSocketPath()
     this._socketService = null;
-    this._isLocked = false;
-    this._settingsChangedId = this._settings.connect(
-      'changed::socket-path', () => { this._onSocketPathChanged(); });
     this._startSocketServer();
   }
 
   disable() {
     this._stopSocketServer();
-    if (this._settingsChangedId) {
-      this._settings.disconnect(this._settingsChangedId);
-    }
-    this._settingsChangedId = null;
-    this._settings = null;
 
     this.dbus.flush();
     this.dbus.unexport();
@@ -83,7 +74,7 @@ export default class Xremap extends Extension {
   }
 
   _startSocketServer() {
-    if (this._socketService || this._isLocked || !this._socketPath) {
+    if (this._socketService || !this._socketPath) {
       return;
     }
 
@@ -99,11 +90,12 @@ export default class Xremap extends Extension {
         try {
           socketFile.delete(null);
         } catch (e) {
-          this._error(`Skipping socket server. Cannot remove stale socket: ${e.message}`);
+          this._error(`Skipping socket server. Cannot remove `
+            + `stale socket at ${this._socketPath}: ${e.message}`);
           return;
         }
       } else if (socketFile.query_exists(null)) {
-        this._error(`Skipping socket server. Socket file has wrong type.`);
+        this._error(`Skipping socket server. ${this._socketPath} has wrong type.`);
         return;
       }
 
@@ -121,10 +113,10 @@ export default class Xremap extends Extension {
       try {
         GLib.chmod(this._socketPath, 0o660);
       } catch (e) {
-        this._error(`Cannot set socket permissions: ${e.message}`);
+        this._error(`Cannot set socket permissions on ${this._socketPath}: ${e.message}`);
       }
     } catch (e) {
-      this._error(`Cannot start socket server: ${e.message}`);
+      this._error(`Cannot start socket server on ${this._socketPath}: ${e.message}`);
       this._socketService = null;
     }
   }
@@ -141,7 +133,7 @@ export default class Xremap extends Extension {
           this._info(`Removed socket file: ${this._socketPath}`);
         }
       } catch (e) {
-        this._error(`Failed to remove socket file: ${e.message}`);
+        this._error(`Failed to remove ${this._socketPath}: ${e.message}`);
       }
     }
   }
@@ -235,13 +227,18 @@ export default class Xremap extends Extension {
     return "Ok";
   }
 
-  _onSocketPathChanged() {
-    const path = this._settings.get_string('socket-path');
-    if (path !== this._socketPath) {
-      this._stopSocketServer();
-      this._socketPath = path;
-      this._startSocketServer();
+  _getSocketPath() {
+    const envPath = GLib.getenv("XREMAP_GNOME_SOCKET");
+    if (envPath) {
+      return envPath;
     }
+    const uid = Gio.Credentials.new().get_unix_user();
+    const dir = Gio.File.new_for_path(`/run/xremap/${uid}`)
+    if (dir.query_file_type('', null) === Gio.FileType.DIRECTORY) {
+      return `/run/xremap/${uid}/xremap.sock`;
+    }
+    // fall back to legacy default
+    return "/run/xremap/gnome.sock";
   }
 
   _isSocket(file) {
