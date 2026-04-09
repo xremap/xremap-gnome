@@ -12,5 +12,5 @@
   "settings-schema": "org.gnome.shell.extensions.xremap",
   "url" : "https://github.com/xremap/xremap-gnome",
   "uuid": "xremap@k0kubun.com",
-  "version" : 13
+  "version" : 14
 }
